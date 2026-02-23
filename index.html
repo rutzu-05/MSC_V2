@@ -18,6 +18,7 @@
 
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: { sans: ['Poppins', 'sans-serif'] },
@@ -36,11 +37,6 @@
     </script>
 
     <style>
-        body {
-            background-color: #f8fafc;
-            color: #0f172a;
-        }
-
         .chart-container {
             position: relative;
             width: 100%;
@@ -120,21 +116,30 @@
     </style>
 </head>
 
-<body class="antialiased min-h-screen flex flex-col">
+<body
+    class="antialiased min-h-screen flex flex-col bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 transition-colors duration-200">
 
-    <nav class="bg-white shadow-sm sticky top-0 z-50 border-b border-slate-200">
+    <nav
+        class="bg-white dark:bg-slate-800 shadow-sm sticky top-0 z-50 border-b border-slate-200 dark:border-slate-700 transition-colors duration-200">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center gap-2">
                 <div class="w-8 h-8 bg-msc-primary rounded-lg flex items-center justify-center text-white font-bold">M
                 </div>
-                <h1 class="font-bold text-lg text-msc-primary tracking-tight">MSC ASESORÍA PRO</h1>
+                <h1 class="font-bold text-base md:text-lg text-msc-primary tracking-tight">MSC ASESORÍA PRO</h1>
             </div>
-            <div class="flex items-center gap-4">
-                <span class="text-[10px] font-bold bg-amber-100 text-amber-700 px-2 py-1 rounded uppercase">Ingeniería
-                    5to Ciclo</span>
+            <div class="flex items-center gap-2 md:gap-4">
+                <select id="themeSelect" onchange="changeTheme()"
+                    class="text-[10px] md:text-xs bg-slate-100 dark:bg-slate-700 dark:text-slate-200 dark:border-slate-600 border rounded py-1 outline-none cursor-pointer">
+                    <option value="system">💻 SIS</option>
+                    <option value="light">☀️ CLR</option>
+                    <option value="dark">🌑 OSC</option>
+                </select>
+                <button onclick="openSettingsModal()"
+                    class="text-[12px] bg-slate-100 dark:bg-slate-700 dark:text-slate-200 w-8 h-8 rounded-full flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-600 transition"
+                    title="Configurar API Key">⚙️</button>
                 <div
-                    class="text-[10px] font-bold bg-stone-100 px-2 py-1 rounded text-stone-500 uppercase tracking-widest border border-stone-200">
-                    v5.3 (Llama 3.1 - Standalone)</div>
+                    class="hidden md:block text-[10px] font-bold bg-stone-100 dark:bg-slate-700 px-2 py-1 rounded text-stone-500 dark:text-slate-300 uppercase tracking-widest border border-stone-200 dark:border-slate-600 transition-colors duration-200">
+                    v5.3</div>
             </div>
         </div>
     </nav>
@@ -142,26 +147,28 @@
     <main class="container mx-auto px-4 py-6 space-y-8">
 
         <!-- ASISTENTE IA (GROQ) -->
-        <section id="asistente" class="max-w-4xl mx-auto bg-white p-6 rounded-2xl shadow-sm border border-emerald-100">
+        <section id="asistente"
+            class="max-w-4xl mx-auto bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-emerald-100 dark:border-slate-700 transition-colors">
             <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center gap-3">
                     <span class="text-2xl">🧠</span>
-                    <h3 class="text-lg font-bold uppercase text-msc-text">Analizador de Síntomas IA (Groq)</h3>
+                    <h3 class="text-lg font-bold uppercase text-msc-text dark:text-slate-100">Analizador de Síntomas IA
+                        (Groq)</h3>
                 </div>
                 <span class="text-[10px] text-slate-400 font-mono">Uso recomendado: Solo casos complejos</span>
             </div>
             <div class="space-y-4">
                 <textarea id="aiSymptomInput" rows="3"
                     placeholder="Paciente con colitis aguda, vinagreras y dolor biliar..."
-                    class="w-full p-4 rounded-xl border-2 border-slate-100 focus:border-msc-primary outline-none transition text-sm"></textarea>
+                    class="w-full p-4 rounded-xl border-2 border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-msc-primary dark:focus:border-emerald-500 outline-none transition text-sm"></textarea>
                 <button onclick="consultarIA()" id="aiBtn"
-                    class="w-full bg-slate-900 text-white p-3 rounded-xl font-bold hover:bg-slate-800 transition flex items-center justify-center gap-2 text-sm uppercase tracking-widest">
+                    class="w-full bg-slate-900 dark:bg-emerald-600 text-white p-3 rounded-xl font-bold hover:bg-slate-800 dark:hover:bg-emerald-700 transition flex items-center justify-center gap-2 text-sm uppercase tracking-widest">
                     <span>Generar Reporte Clínico ✨</span>
                 </button>
                 <div id="aiResponse"
-                    class="hidden p-6 bg-emerald-50 rounded-xl border border-emerald-200 technical-report relative">
+                    class="hidden p-6 bg-emerald-50 dark:bg-slate-900 rounded-xl border border-emerald-200 dark:border-emerald-800/30 technical-report relative text-slate-800 dark:text-slate-200">
                     <button id="copyBtn" onclick="copyResponse()"
-                        class="absolute top-4 right-4 text-[9px] bg-white border border-emerald-200 px-2 py-1 rounded font-bold hover:bg-emerald-100 transition uppercase">Copiar</button>
+                        class="absolute top-4 right-4 text-[9px] bg-white dark:bg-slate-800 border border-emerald-200 dark:border-slate-600 px-2 py-1 rounded font-bold hover:bg-emerald-100 dark:hover:bg-slate-700 transition uppercase">Copiar</button>
                     <div id="aiContent" class="mt-1"></div>
                 </div>
             </div>
@@ -169,25 +176,28 @@
 
         <!-- BUSCADOR MANUAL Y CATÁLOGO -->
         <section id="catalogo">
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div
+                class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden transition-colors">
                 <div
-                    class="p-4 bg-slate-50 border-b border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    class="p-4 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-colors">
                     <div>
-                        <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider">Catálogo Maestro</h3>
-                        <p class="text-[9px] text-slate-400 font-bold uppercase">Navegación local - <span
-                                id="productCount" class="text-msc-primary">0</span> productos</p>
+                        <h3 class="text-sm font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider">
+                            Catálogo Maestro</h3>
+                        <p class="text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase">Navegación local -
+                            <span id="productCount" class="text-msc-primary dark:text-emerald-400">0</span> productos
+                        </p>
                     </div>
                     <!-- BUSCADOR TÉCNICO -->
                     <div class="relative w-full md:w-80">
                         <input type="text" id="manualSearch" onkeyup="filterProductsManual()"
                             placeholder="Buscar por nombre, ingrediente o síntoma..."
-                            class="w-full text-xs p-3 pl-9 rounded-lg border border-slate-200 outline-none focus:border-msc-primary shadow-sm transition">
+                            class="w-full text-xs p-3 pl-9 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 outline-none focus:border-msc-primary dark:focus:border-emerald-500 shadow-sm transition">
                         <span class="absolute left-3 top-1/2 -translate-y-1/2 opacity-40">🔍</span>
                     </div>
                 </div>
 
                 <button onclick="toggleCatalog()"
-                    class="w-full p-2 bg-white text-slate-400 font-bold text-[10px] uppercase tracking-widest hover:text-msc-primary transition flex justify-center items-center gap-2">
+                    class="w-full p-2 bg-white dark:bg-slate-800 text-slate-400 dark:text-slate-500 font-bold text-[10px] uppercase tracking-widest hover:text-msc-primary dark:hover:text-emerald-400 transition flex justify-center items-center gap-2">
                     <span id="toggleText">Ocultar Productos</span> <span id="toggleIcon">▲</span>
                 </button>
 
@@ -195,17 +205,24 @@
                     <div id="productGrid"
                         class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                     </div>
-                    <div id="noResults" class="hidden text-center py-20 text-slate-300 italic text-sm">No se encontraron
+                    <div id="noResults"
+                        class="hidden text-center py-20 text-slate-300 dark:text-slate-600 italic text-sm">No se
+                        encontraron
                         productos coincidentes.</div>
                 </div>
             </div>
         </section>
 
         <!-- PACKS -->
-        <section id="packs" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="p-4 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
-                <h3 class="text-sm font-bold uppercase tracking-widest text-slate-700">Protocolos de Ahorro (Packs)</h3>
-                <span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded font-bold">4 ACTIVOS</span>
+        <section id="packs"
+            class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden transition-colors">
+            <div
+                class="p-4 bg-slate-50 dark:bg-slate-900 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center transition-colors">
+                <h3 class="text-sm font-bold uppercase tracking-widest text-slate-700 dark:text-slate-200">Protocolos de
+                    Ahorro (Packs)</h3>
+                <span
+                    class="text-[10px] bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded font-bold">4
+                    ACTIVOS</span>
             </div>
             <div class="p-6 grid lg:grid-cols-2 gap-8 items-center">
                 <div id="packsList" class="space-y-3"></div>
@@ -217,48 +234,93 @@
 
     <!-- MODAL FICHA TÉCNICA -->
     <div id="productModal"
-        class="fixed inset-0 bg-slate-900 bg-opacity-60 z-[100] hidden flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
-            <div class="bg-slate-50 p-6 border-b border-slate-200 flex justify-between items-center">
+        class="fixed inset-0 bg-slate-900 bg-opacity-80 z-[100] hidden flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
+        <div
+            class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden transition-colors">
+            <div
+                class="bg-slate-50 dark:bg-slate-900 p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center transition-colors">
                 <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center text-2xl shadow-inner">💊
+                    <div
+                        class="w-12 h-12 bg-white dark:bg-slate-800 rounded-lg flex items-center justify-center text-2xl shadow-inner border dark:border-slate-700">
+                        💊
                     </div>
                     <div>
-                        <h2 id="modalTitle" class="text-xl font-bold text-slate-800 uppercase tracking-tight"></h2>
+                        <h2 id="modalTitle"
+                            class="text-xl font-bold text-slate-800 dark:text-slate-100 uppercase tracking-tight"></h2>
                         <div id="modalMeta" class="flex gap-2 mt-1"></div>
                     </div>
                 </div>
-                <button onclick="closeModal()" class="text-slate-400 text-3xl leading-none">&times;</button>
+                <button onclick="closeModal()"
+                    class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-3xl leading-none transition">&times;</button>
             </div>
             <div class="p-6 overflow-y-auto flex-1 custom-scroll space-y-6">
                 <section>
                     <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Resumen Terapéutico
                     </h4>
                     <p id="modalDesc"
-                        class="text-sm text-slate-600 bg-slate-50 p-4 rounded-xl leading-relaxed border border-slate-100">
+                        class="text-sm text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl leading-relaxed border border-slate-100 dark:border-slate-700">
                     </p>
                 </section>
                 <div class="grid md:grid-cols-2 gap-6">
                     <section>
                         <h4
-                            class="text-[10px] font-bold text-emerald-600 uppercase border-b border-emerald-100 pb-2 mb-3">
+                            class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase border-b border-emerald-100 dark:border-emerald-900/50 pb-2 mb-3">
                             Composición Detallada</h4>
                         <div id="modalIngredients" class="flex flex-wrap gap-1.5"></div>
                     </section>
                     <section>
-                        <h4 class="text-[10px] font-bold text-amber-600 uppercase border-b border-amber-100 pb-2 mb-3">
+                        <h4
+                            class="text-[10px] font-bold text-amber-600 dark:text-amber-400 uppercase border-b border-amber-100 dark:border-amber-900/50 pb-2 mb-3">
                             Indicaciones Técnicas</h4>
                         <div id="modalSymptoms" class="flex flex-wrap gap-1.5"></div>
                     </section>
                 </div>
             </div>
-            <div class="bg-slate-50 p-4 border-t border-slate-200 text-center"><button onclick="closeModal()"
-                    class="bg-slate-900 text-white px-10 py-2 rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-slate-800 transition">Cerrar
+            <div
+                class="bg-slate-50 dark:bg-slate-900 p-4 border-t border-slate-200 dark:border-slate-700 text-center transition-colors">
+                <button onclick="closeModal()"
+                    class="bg-slate-900 dark:bg-slate-700 text-white px-10 py-2 rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-slate-800 dark:hover:bg-slate-600 transition">Cerrar
                     Ficha</button></div>
         </div>
     </div>
 
-        <script src="js/data.js"></script>
+    <!-- MODAL CONFIGURACIÓN API KEY -->
+    <div id="settingsModal"
+        class="fixed inset-0 bg-slate-900 bg-opacity-60 z-[100] hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md flex flex-col overflow-hidden">
+            <div
+                class="bg-slate-50 dark:bg-slate-900 p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="text-2xl">⚙️</div>
+                    <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100 uppercase tracking-tight">
+                        Configuración Groq</h2>
+                </div>
+                <button onclick="closeSettingsModal()" class="text-slate-400 text-3xl leading-none">&times;</button>
+            </div>
+            <div class="p-6 space-y-4">
+                <p class="text-sm text-slate-600 dark:text-slate-300">Para usar el Analizador IA, ingresa tu propia
+                    <strong>API Key de Groq</strong>. Esta llave se guardará de forma segura en tu navegador
+                    (LocalStorage).
+                </p>
+                <div>
+                    <label for="apiKeyInput"
+                        class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1">Tu
+                        API Key (gsk_...)</label>
+                    <input type="password" id="apiKeyInput" placeholder="gsk_..."
+                        class="w-full text-sm p-3 rounded-lg border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 outline-none focus:border-msc-primary shadow-sm transition">
+                </div>
+            </div>
+            <div
+                class="bg-slate-50 dark:bg-slate-900 p-4 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3">
+                <button onclick="closeSettingsModal()"
+                    class="px-4 py-2 rounded-lg text-xs font-bold text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition">Cancelar</button>
+                <button onclick="saveApiKey()"
+                    class="bg-msc-primary text-white px-6 py-2 rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-emerald-700 transition">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
     <script src="js/prompt.js"></script>
     <script src="js/api.js"></script>
     <script src="js/app.js"></script>

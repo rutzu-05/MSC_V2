@@ -60,14 +60,14 @@ function renderProducts(list = database.productos) {
     if (count) count.innerText = list.length;
 
     g.innerHTML = list.map(p => `
-        <div class="product-card bg-white p-4 rounded-xl flex flex-col justify-between h-full relative overflow-hidden group">
-            <div class="absolute top-0 right-0 bg-slate-50 text-slate-400 text-[8px] font-bold px-2 py-1 rounded-bl-lg">${p.pres}</div>
+        <div class="product-card bg-white dark:bg-slate-900 dark:border-slate-700 p-4 rounded-xl flex flex-col justify-between h-full relative overflow-hidden group transition-colors">
+            <div class="absolute top-0 right-0 bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500 text-[8px] font-bold px-2 py-1 rounded-bl-lg">${p.pres}</div>
             <div>
-                <div class="text-[10px] font-bold text-msc-primary mb-1 uppercase tracking-tighter">S/ ${p.precio.toFixed(2)}</div>
-                <h4 class="font-bold text-[11px] text-slate-700 uppercase leading-tight group-hover:text-msc-primary transition">${p.nombre}</h4>
-                <div class="flex flex-wrap gap-1 mt-2">${p.tags.slice(0, 3).map(t => `<span class="text-[7px] bg-slate-100 px-1 rounded-sm text-slate-500 uppercase">${t}</span>`).join('')}</div>
+                <div class="text-[10px] font-bold text-msc-primary dark:text-emerald-400 mb-1 uppercase tracking-tighter">S/ ${p.precio.toFixed(2)}</div>
+                <h4 class="font-bold text-[11px] text-slate-700 dark:text-slate-200 uppercase leading-tight group-hover:text-msc-primary dark:group-hover:text-emerald-400 transition">${p.nombre}</h4>
+                <div class="flex flex-wrap gap-1 mt-2">${p.tags.slice(0, 3).map(t => `<span class="text-[7px] bg-slate-100 dark:bg-slate-800 px-1 rounded-sm text-slate-500 dark:text-slate-400 uppercase">${t}</span>`).join('')}</div>
             </div>
-            <button onclick="openModal('${p.id}')" class="w-full mt-4 text-[9px] font-bold text-slate-500 bg-slate-50 border py-1.5 rounded hover:bg-emerald-600 hover:text-white hover:border-emerald-600 transition">VER FICHA</button>
+            <button onclick="openModal('${p.id}')" class="w-full mt-4 text-[9px] font-bold text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800 border dark:border-slate-700 py-1.5 rounded hover:bg-emerald-600 dark:hover:bg-emerald-600 hover:text-white dark:hover:text-white hover:border-emerald-600 dark:hover:border-emerald-600 transition">VER FICHA</button>
         </div>
     `).join('');
 }
@@ -168,10 +168,48 @@ function saveApiKey() {
     }
 }
 
+// --- Theme Logic --- //
+function applyTheme(theme) {
+    if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+    } else if (theme === 'light') {
+        document.documentElement.classList.remove('dark');
+    } else {
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    }
+}
+
+function changeTheme() {
+    const select = document.getElementById('themeSelect');
+    if (!select) return;
+    const theme = select.value;
+    localStorage.setItem('mscTheme', theme);
+    applyTheme(theme);
+}
+
+function initTheme() {
+    const savedTheme = localStorage.getItem('mscTheme') || 'system';
+    const select = document.getElementById('themeSelect');
+    if (select) select.value = savedTheme;
+    applyTheme(savedTheme);
+}
+
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    if (localStorage.getItem('mscTheme') === 'system' || !localStorage.getItem('mscTheme')) {
+        applyTheme('system');
+    }
+});
+// ------------------- //
+
 window.onload = () => {
+    initTheme();
     renderProducts();
     const pList = document.getElementById('packsList');
-    if (pList) pList.innerHTML = database.packs.map(p => `<div class="p-3 border rounded-xl bg-white shadow-sm flex justify-between items-center"><div class="max-w-[70%]"><h5 class="font-bold text-xs uppercase text-slate-700">${p.n}</h5><p class="text-[8px] text-slate-400 mt-0.5">${p.d}</p></div><div class="text-right"><div class="text-[10px] font-bold text-emerald-600">S/ ${p.o}</div><div class="text-[8px] text-slate-300 line-through">S/ ${p.r}</div></div></div>`).join('');
+    if (pList) pList.innerHTML = database.packs.map(p => `<div class="p-3 border dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 shadow-sm flex justify-between items-center transition-colors"><div class="max-w-[70%]"><h5 class="font-bold text-xs uppercase text-slate-700 dark:text-slate-200">${p.n}</h5><p class="text-[8px] text-slate-400 dark:text-slate-500 mt-0.5">${p.d}</p></div><div class="text-right"><div class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">S/ ${p.o}</div><div class="text-[8px] text-slate-300 dark:text-slate-500 line-through">S/ ${p.r}</div></div></div>`).join('');
 
     const canvas = document.getElementById('packsChart');
     if (canvas) {
