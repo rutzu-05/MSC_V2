@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MSC | Panel Técnico Maestro ✨</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Poppins', 'sans-serif'] },
+                    colors: {
+                        msc: {
+                            base: '#f8fafc',
+                            primary: '#059669',
+                            secondary: '#d97706',
+                            text: '#0f172a',
+                            muted: '#64748b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            height: 300px;
+            max-height: 400px;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+
+        .product-card {
+            transition: all 0.2s ease;
+            border: 1px solid #e2e8f0;
+        }
+
+        .product-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            border-color: #059669;
+        }
+
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 3px solid #059669;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .technical-report h4 {
+            font-weight: 700;
+            color: #065f46;
+            margin-top: 1rem;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            border-bottom: 1px solid #d1fae5;
+            padding-bottom: 2px;
+        }
+
+        .technical-report p {
+            font-size: 0.85rem;
+            margin-top: 4px;
+            color: #1e293b;
+        }
+
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 8px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body class="antialiased min-h-screen flex flex-col">
+
+    <nav class="bg-white shadow-sm sticky top-0 z-50 border-b border-slate-200">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-msc-primary rounded-lg flex items-center justify-center text-white font-bold">M
+                </div>
+                <h1 class="font-bold text-lg text-msc-primary tracking-tight">MSC ASESORÍA PRO</h1>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="text-[10px] font-bold bg-amber-100 text-amber-700 px-2 py-1 rounded uppercase">Ingeniería
+                    5to Ciclo</span>
+                <div
+                    class="text-[10px] font-bold bg-stone-100 px-2 py-1 rounded text-stone-500 uppercase tracking-widest border border-stone-200">
+                    v5.3 (Llama 3.1 - Standalone)</div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-6 space-y-8">
+
+        <!-- ASISTENTE IA (GROQ) -->
+        <section id="asistente" class="max-w-4xl mx-auto bg-white p-6 rounded-2xl shadow-sm border border-emerald-100">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl">🧠</span>
+                    <h3 class="text-lg font-bold uppercase text-msc-text">Analizador de Síntomas IA (Groq)</h3>
+                </div>
+                <span class="text-[10px] text-slate-400 font-mono">Uso recomendado: Solo casos complejos</span>
+            </div>
+            <div class="space-y-4">
+                <textarea id="aiSymptomInput" rows="3"
+                    placeholder="Paciente con colitis aguda, vinagreras y dolor biliar..."
+                    class="w-full p-4 rounded-xl border-2 border-slate-100 focus:border-msc-primary outline-none transition text-sm"></textarea>
+                <button onclick="consultarIA()" id="aiBtn"
+                    class="w-full bg-slate-900 text-white p-3 rounded-xl font-bold hover:bg-slate-800 transition flex items-center justify-center gap-2 text-sm uppercase tracking-widest">
+                    <span>Generar Reporte Clínico ✨</span>
+                </button>
+                <div id="aiResponse"
+                    class="hidden p-6 bg-emerald-50 rounded-xl border border-emerald-200 technical-report relative">
+                    <button id="copyBtn" onclick="copyResponse()"
+                        class="absolute top-4 right-4 text-[9px] bg-white border border-emerald-200 px-2 py-1 rounded font-bold hover:bg-emerald-100 transition uppercase">Copiar</button>
+                    <div id="aiContent" class="mt-1"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BUSCADOR MANUAL Y CATÁLOGO -->
+        <section id="catalogo">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div
+                    class="p-4 bg-slate-50 border-b border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider">Catálogo Maestro</h3>
+                        <p class="text-[9px] text-slate-400 font-bold uppercase">Navegación local - <span
+                                id="productCount" class="text-msc-primary">0</span> productos</p>
+                    </div>
+                    <!-- BUSCADOR TÉCNICO -->
+                    <div class="relative w-full md:w-80">
+                        <input type="text" id="manualSearch" onkeyup="filterProductsManual()"
+                            placeholder="Buscar por nombre, ingrediente o síntoma..."
+                            class="w-full text-xs p-3 pl-9 rounded-lg border border-slate-200 outline-none focus:border-msc-primary shadow-sm transition">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 opacity-40">🔍</span>
+                    </div>
+                </div>
+
+                <button onclick="toggleCatalog()"
+                    class="w-full p-2 bg-white text-slate-400 font-bold text-[10px] uppercase tracking-widest hover:text-msc-primary transition flex justify-center items-center gap-2">
+                    <span id="toggleText">Ocultar Productos</span> <span id="toggleIcon">▲</span>
+                </button>
+
+                <div id="catalogContent" class="p-6">
+                    <div id="productGrid"
+                        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                    </div>
+                    <div id="noResults" class="hidden text-center py-20 text-slate-300 italic text-sm">No se encontraron
+                        productos coincidentes.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PACKS -->
+        <section id="packs" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-4 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
+                <h3 class="text-sm font-bold uppercase tracking-widest text-slate-700">Protocolos de Ahorro (Packs)</h3>
+                <span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded font-bold">4 ACTIVOS</span>
+            </div>
+            <div class="p-6 grid lg:grid-cols-2 gap-8 items-center">
+                <div id="packsList" class="space-y-3"></div>
+                <div class="chart-container"><canvas id="packsChart"></canvas></div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL FICHA TÉCNICA -->
+    <div id="productModal"
+        class="fixed inset-0 bg-slate-900 bg-opacity-60 z-[100] hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
+            <div class="bg-slate-50 p-6 border-b border-slate-200 flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center text-2xl shadow-inner">💊
+                    </div>
+                    <div>
+                        <h2 id="modalTitle" class="text-xl font-bold text-slate-800 uppercase tracking-tight"></h2>
+                        <div id="modalMeta" class="flex gap-2 mt-1"></div>
+                    </div>
+                </div>
+                <button onclick="closeModal()" class="text-slate-400 text-3xl leading-none">&times;</button>
+            </div>
+            <div class="p-6 overflow-y-auto flex-1 custom-scroll space-y-6">
+                <section>
+                    <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Resumen Terapéutico
+                    </h4>
+                    <p id="modalDesc"
+                        class="text-sm text-slate-600 bg-slate-50 p-4 rounded-xl leading-relaxed border border-slate-100">
+                    </p>
+                </section>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <section>
+                        <h4
+                            class="text-[10px] font-bold text-emerald-600 uppercase border-b border-emerald-100 pb-2 mb-3">
+                            Composición Detallada</h4>
+                        <div id="modalIngredients" class="flex flex-wrap gap-1.5"></div>
+                    </section>
+                    <section>
+                        <h4 class="text-[10px] font-bold text-amber-600 uppercase border-b border-amber-100 pb-2 mb-3">
+                            Indicaciones Técnicas</h4>
+                        <div id="modalSymptoms" class="flex flex-wrap gap-1.5"></div>
+                    </section>
+                </div>
+            </div>
+            <div class="bg-slate-50 p-4 border-t border-slate-200 text-center"><button onclick="closeModal()"
+                    class="bg-slate-900 text-white px-10 py-2 rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-slate-800 transition">Cerrar
+                    Ficha</button></div>
+        </div>
+    </div>
+
+        <script src="js/data.js"></script>
+    <script src="js/prompt.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
