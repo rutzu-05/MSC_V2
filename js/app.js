@@ -137,6 +137,37 @@ function showCopiedFeedback(btn) {
     }, 2000);
 }
 
+// --- Modal Configuración --- //
+function openSettingsModal() {
+    const modal = document.getElementById('settingsModal');
+    const input = document.getElementById('apiKeyInput');
+    const savedKey = localStorage.getItem('groqApiKey');
+
+    if (savedKey && input) {
+        input.value = savedKey;
+    }
+
+    if (modal) modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeSettingsModal() {
+    const modal = document.getElementById('settingsModal');
+    if (modal) modal.classList.add('hidden');
+    document.body.style.overflow = 'auto';
+}
+
+function saveApiKey() {
+    const input = document.getElementById('apiKeyInput');
+    if (input && input.value.trim() !== '') {
+        localStorage.setItem('groqApiKey', input.value.trim());
+        closeSettingsModal();
+        alert('API Key guardada localmente con éxito.');
+    } else {
+        alert('Por favor inserta una API Key válida.');
+    }
+}
+
 window.onload = () => {
     renderProducts();
     const pList = document.getElementById('packsList');
