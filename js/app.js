@@ -48,7 +48,7 @@ async function consultarIA() {
         res.classList.remove('hidden');
     } finally {
         btn.disabled = false;
-        btn.innerHTML = "<span>Generar Reporte Clínico ✨</span>";
+        btn.innerHTML = "<span>Generar Reporte Clínico</span>";
     }
 }
 
